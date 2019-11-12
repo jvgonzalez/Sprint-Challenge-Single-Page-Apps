@@ -6,17 +6,17 @@ import CharacterLoop from "./components/CharacterList.js";
 import SearchForm from "./components/SearchForm";
 import WelcomePage from "./components/WelcomePage";
 
-
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      rickmorty: []
+      rickmorty: [],
+      searchResults: null
     };
   }
 
   componentDidMount() {
-    this.getCharacters("https://rickandmortyapi.com/api/character/")
+    this.getCharacters("https://rickandmortyapi.com/api/character/");
   }
 
   getCharacters = URL => {
@@ -32,48 +32,51 @@ class App extends Component {
       });
   };
 
+  searchCharacters = query => {
+    const search = this.state.rickmorty.filter(character => {
+      return character.name.includes(query);
+    });
+
+    console.log(search);
+
+    this.setState({
+      searchResults: search
+    });
+  };
+
   render() {
-    return(
+    return (
       <div>
         <Header />
 
-        
+        <SearchForm
+          characters={this.state}
+          searchCharacters={this.searchCharacters}
+        />
 
-        <Route path="/characters"
-        render= {props => <CharacterLoop {...props} characterInfo={this.state} />}
+        <Route
+          path="/characters"
+          render={props => (
+            <CharacterLoop {...props} characterInfo={this.state} />
+          )}
         />
 
         <Route exact path="/" component={WelcomePage} />
 
         <Link
-              style={{
-                
-                color: "green",
-                marginLeft: "40%",
-                fontSize: "2em",
-                textAlign: "center",
-                
-                
-                
-              }}
-              to="/characters"
-            >
-              {" "}
-             Get to know the characters
+          style={{
+            color: "green",
+            marginLeft: "40%",
+            fontSize: "2em",
+            textAlign: "center"
+          }}
+          to="/characters"
+        >
+          {" "}
+          Get to know the characters
         </Link>
-
-        <SearchForm />
-
-
-
-
-
-
-        
-
-
       </div>
-    )
+    );
   }
 }
 
